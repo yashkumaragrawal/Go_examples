@@ -1,0 +1,28 @@
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func task(id int, job <-chan string) {
+    for j := range job {
+	time.Sleep(time.Millisecond)
+        fmt.Println("ROUTINE_ID = ", id, "VALUE = ", j)
+    }
+}
+
+func main() {
+	arr := []string{"A","B","C","D","E","F"}
+	job := make(chan string, len(arr))
+	for i := 1; i <= 3; i++ {
+        	go task(i, job)
+    	} 
+	
+	for i := 0; i < len(arr); i++ {
+        	job <- arr[i]
+    	}
+	
+	close(job)
+	time.Sleep(time.Second)
+}
